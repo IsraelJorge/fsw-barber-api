@@ -1,22 +1,8 @@
 import 'reflect-metadata'
 import '@/shared/container'
 
-import { fastify } from 'fastify'
-import {
-  serializerCompiler,
-  validatorCompiler,
-  ZodTypeProvider,
-} from 'fastify-type-provider-zod'
-
-import { userRoutes } from './modules/user/user.routes'
-import { ENV } from './shared/env'
-
-const app = fastify().withTypeProvider<ZodTypeProvider>()
-
-app.setSerializerCompiler(serializerCompiler)
-app.setValidatorCompiler(validatorCompiler)
-
-app.register(userRoutes)
+import { app } from './shared/app'
+import { ENV } from './shared/utils/env'
 
 app
   .listen({ port: ENV.PORT })

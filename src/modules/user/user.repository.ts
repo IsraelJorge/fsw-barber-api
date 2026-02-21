@@ -41,7 +41,8 @@ export class UserRepository {
 
   async delete(id: string) {
     const [user] = await db
-      .delete(userTable)
+      .update(userTable)
+      .set({ deletedAt: new Date() })
       .where(eq(userTable.id, id))
       .returning()
     return user

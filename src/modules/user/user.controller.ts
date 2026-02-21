@@ -1,8 +1,8 @@
 import type { FastifyReply } from 'fastify'
 import { inject, injectable } from 'tsyringe'
 
-import { HTTP_STATUS } from '@/shared/http-status'
 import { IdInput } from '@/shared/schemas/id.schema'
+import { HTTP_STATUS } from '@/shared/utils/http-status'
 
 import type { CreateUserInput, UpdateUserInput } from './user.schema'
 import { UserService } from './user.service'

@@ -9,7 +9,7 @@
     "build": "tsx build",
     "prepare": "husky",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix --ext ts,tsx src && prettier --write src",
+    "lint:fix": "eslint --fix --ext ts src && prettier --write src",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",

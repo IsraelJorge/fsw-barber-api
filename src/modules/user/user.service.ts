@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 
-import { AppError } from '@/shared/app-error'
-import { HTTP_STATUS } from '@/shared/http-status'
+import { AppError } from '@/shared/errors/app-error'
+import { HTTP_STATUS } from '@/shared/utils/http-status'
 
 import { UserRepository } from './user.repository'
 import type { CreateUserInput, UpdateUserInput } from './user.schema'
