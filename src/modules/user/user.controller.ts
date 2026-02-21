@@ -10,7 +10,7 @@ import { UserService } from './user.service'
 @injectable()
 export class UserController {
   constructor(
-    @inject(UserService)
+    @inject('UserService')
     private readonly service: UserService,
   ) {}
 

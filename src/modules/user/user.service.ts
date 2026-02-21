@@ -9,7 +9,7 @@ import type { CreateUserInput, UpdateUserInput } from './user.schema'
 @injectable()
 export class UserService {
   constructor(
-    @inject(UserRepository)
+    @inject('UserRepository')
     private readonly repository: UserRepository,
   ) {}
 
