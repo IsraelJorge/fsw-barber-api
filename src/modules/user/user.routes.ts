@@ -18,7 +18,7 @@ export function userRoutes(app: FastifyInstance) {
         querystring: PaginationSchema,
       },
     },
-    controller.findAll,
+    controller.findAll.bind(controller),
   )
 
   app.get(
@@ -29,7 +29,7 @@ export function userRoutes(app: FastifyInstance) {
         params: IdSchema,
       },
     },
-    controller.findById,
+    controller.findById.bind(controller),
   )
 
   app.post(
@@ -40,7 +40,7 @@ export function userRoutes(app: FastifyInstance) {
         body: CreateUserSchema,
       },
     },
-    controller.create,
+    controller.create.bind(controller),
   )
 
   app.put(
@@ -52,7 +52,7 @@ export function userRoutes(app: FastifyInstance) {
         body: UpdateUserSchema,
       },
     },
-    controller.update,
+    controller.update.bind(controller),
   )
 
   app.delete(
@@ -63,6 +63,6 @@ export function userRoutes(app: FastifyInstance) {
         params: IdSchema,
       },
     },
-    controller.delete,
+    controller.delete.bind(controller),
   )
 }
