@@ -132,10 +132,11 @@ Essa estrutura é obrigatória e não pode ser ignorada.
 - Utilize **tipos mapeados** e **tipos condicionais** para transformações avançadas
 - Exporte tipos a partir de um **local centralizado** para reutilização
 
-# 🏗 Estrutura do Código
+# Estrutura do Código
 
 - Escreva código **conciso, técnico e direto**
-- Utilize **programação funcional e declarativa**
+- Utilize **classes para implementações dos módulos**
+- Utilize o paradigma da **programação orientada a objetos**
 - Prefira **funções puras**
 - Prefira **modularização e composição** à duplicação de código
 - Utilize nomes descritivos com verbos auxiliares:
