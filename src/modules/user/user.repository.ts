@@ -1,15 +1,21 @@
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db } from '@/db'
-import { userTable } from '@/db/schemas/user'
+import { User, userTable } from '@/db/schemas/user'
+import { PaginationParams, withPagination } from '@/shared/pagination'
 
 import type { CreateUserInput, UpdateUserInput } from './user.schema'
 
 @injectable()
 export class UserRepository {
-  async findAll() {
-    return db.select().from(userTable)
+  async findAll({ filters }: PaginationParams) {
+    return withPagination<User>({
+      db,
+      table: userTable,
+      orderByColumn: desc(userTable.createdAt),
+      pagination: { page: filters.page, limit: filters.limit },
+    })
   }
 
   async findById(id: string) {

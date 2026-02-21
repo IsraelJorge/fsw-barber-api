@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 
 import { AppError } from '@/shared/errors/app-error'
+import { PaginationParams } from '@/shared/pagination/types'
 import { HTTP_STATUS } from '@/shared/utils/http-status'
 
 import { UserRepository } from './user.repository'
@@ -13,8 +14,8 @@ export class UserService {
     private readonly repository: UserRepository,
   ) {}
 
-  async findAll() {
-    return this.repository.findAll()
+  async findAll(params: PaginationParams) {
+    return this.repository.findAll(params)
   }
 
   async findById(id: string) {

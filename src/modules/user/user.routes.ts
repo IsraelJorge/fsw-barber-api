@@ -1,12 +1,13 @@
-import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
+import { FastifyInstance } from 'fastify'
 import { container } from 'tsyringe'
 
 import { IdSchema } from '@/shared/schemas/id.schema'
+import { PaginationSchema } from '@/shared/schemas/pagination.schema'
 
 import { UserController } from './user.controller'
 import { CreateUserSchema, UpdateUserSchema } from './user.schema'
 
-export const userRoutes: FastifyPluginAsyncZod = async (app) => {
+export function userRoutes(app: FastifyInstance) {
   const controller = container.resolve(UserController)
 
   app.get(
@@ -14,9 +15,10 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
     {
       schema: {
         tags: ['Users'],
+        querystring: PaginationSchema,
       },
     },
-    async (_, reply) => controller.findAll(reply),
+    controller.findAll,
   )
 
   app.get(
@@ -27,7 +29,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
         params: IdSchema,
       },
     },
-    async (request, reply) => controller.findById(request.params, reply),
+    controller.findById,
   )
 
   app.post(
@@ -38,7 +40,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
         body: CreateUserSchema,
       },
     },
-    async (request, reply) => controller.create(request.body, reply),
+    controller.create,
   )
 
   app.put(
@@ -50,8 +52,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
         body: UpdateUserSchema,
       },
     },
-    async (request, reply) =>
-      controller.update(request.params, request.body, reply),
+    controller.update,
   )
 
   app.delete(
@@ -62,6 +63,6 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
         params: IdSchema,
       },
     },
-    async (request, reply) => controller.delete(request.params, reply),
+    controller.delete,
   )
 }
