@@ -43,7 +43,14 @@ export class UserRepository {
   }
 
   async create(data: CreateUserInput) {
-    const [user] = await db.insert(userTable).values(data).returning()
+    const [user] = await db.insert(userTable).values(data).returning({
+      id: userTable.id,
+      name: userTable.name,
+      email: userTable.email,
+      avatar: userTable.avatar,
+      role: userTable.role,
+      createdAt: userTable.createdAt,
+    })
     return user
   }
 
@@ -52,7 +59,14 @@ export class UserRepository {
       .update(userTable)
       .set(data)
       .where(eq(userTable.id, id))
-      .returning()
+      .returning({
+        id: userTable.id,
+        name: userTable.name,
+        email: userTable.email,
+        avatar: userTable.avatar,
+        role: userTable.role,
+        createdAt: userTable.createdAt,
+      })
     return user
   }
 
@@ -61,7 +75,14 @@ export class UserRepository {
       .update(userTable)
       .set({ deletedAt: new Date() })
       .where(eq(userTable.id, id))
-      .returning()
+      .returning({
+        id: userTable.id,
+        name: userTable.name,
+        email: userTable.email,
+        avatar: userTable.avatar,
+        role: userTable.role,
+        createdAt: userTable.createdAt,
+      })
     return user
   }
 }

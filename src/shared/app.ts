@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import './container'
 
+import fastifyJwt from '@fastify/jwt'
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 import {
   serializerCompiler,
@@ -13,6 +14,7 @@ import { routes } from '@/http/routes'
 
 import { AppError } from './errors/app-error'
 import { MessageError } from './errors/message-error'
+import { ENV } from './utils/env'
 import { HTTP_STATUS } from './utils/http-status'
 
 export class App {
@@ -20,6 +22,7 @@ export class App {
 
   constructor() {
     this.serializers()
+    this.plugins()
     this.routes()
     this.exceptionHandler()
   }
@@ -27,6 +30,13 @@ export class App {
   serializers() {
     this.server.setValidatorCompiler(validatorCompiler)
     this.server.setSerializerCompiler(serializerCompiler)
+  }
+
+  plugins() {
+    this.server.register(fastifyJwt, {
+      secret: ENV.JWT_SECRET,
+      sign: { expiresIn: '1d' },
+    })
   }
 
   routes() {

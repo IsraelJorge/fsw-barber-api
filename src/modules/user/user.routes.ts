@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { container } from 'tsyringe'
 
+import { authenticate } from '@/shared/middlewares/authenticate'
 import { IdSchema } from '@/shared/schemas/id.schema'
 
 import { UserController } from './user.controller'
@@ -16,6 +17,7 @@ export function userRoutes(app: FastifyInstance) {
   app.get(
     '/users',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['Users'],
         querystring: UserFiltersSchema,
@@ -27,6 +29,7 @@ export function userRoutes(app: FastifyInstance) {
   app.get(
     '/users/:id',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['Users'],
         params: IdSchema,
@@ -49,6 +52,7 @@ export function userRoutes(app: FastifyInstance) {
   app.put(
     '/users/:id',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['Users'],
         params: IdSchema,
@@ -61,6 +65,7 @@ export function userRoutes(app: FastifyInstance) {
   app.delete(
     '/users/:id',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['Users'],
         params: IdSchema,

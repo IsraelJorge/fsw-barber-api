@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import { inject, injectable } from 'tsyringe'
 
 import { AppError } from '@/shared/errors/app-error'
@@ -42,7 +43,12 @@ export class UserService {
         statusCode: HTTP_STATUS.CONFLICT,
       })
     }
-    return this.userRepository.create(data)
+
+    const hashedPassword = data.password
+      ? await bcrypt.hash(data.password, 10)
+      : undefined
+
+    return this.userRepository.create({ ...data, password: hashedPassword })
   }
 
   async update(id: string, data: UpdateUserInput) {

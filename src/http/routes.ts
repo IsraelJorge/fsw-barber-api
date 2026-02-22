@@ -4,6 +4,7 @@ import {
   HookHandlerDoneFunction,
 } from 'fastify'
 
+import { authRoutes } from '@/modules/auth/auth.routes'
 import { userRoutes } from '@/modules/user/user.routes'
 
 export function routes(
@@ -11,6 +12,7 @@ export function routes(
   _opts: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
 ) {
+  app.register(authRoutes)
   app.register(userRoutes)
 
   done()
