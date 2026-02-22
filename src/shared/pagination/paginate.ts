@@ -46,19 +46,21 @@ export async function withPagination<
   pagination: { page, limit },
   where,
 }: WithPaginationParams<TSchema>): Promise<Pagination<TRow>> {
-  const baseQuery = db.select().from(table).$dynamic()
-  const filteredQuery = where ? baseQuery.where(where) : baseQuery
-
-  const data = (await filteredQuery
+  const data = (await db
+    .select()
+    .from(table)
+    .$dynamic()
+    .where(where)
     .orderBy(orderByColumn)
     .limit(limit)
     .offset((page - 1) * limit)) as TRow[]
 
-  const sub = filteredQuery.as('sub')
-
-  const [{ total }] = await db
+  const countQuery = db
     .select({ total: sql<number>`count(*)` })
-    .from(sub)
+    .from(table)
+    .$dynamic()
+
+  const [{ total }] = where ? await countQuery.where(where) : await countQuery
 
   return paginate<TRow>({
     data,
