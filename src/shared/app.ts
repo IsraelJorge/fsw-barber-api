@@ -4,11 +4,11 @@ import './container'
 import fastifyJwt from '@fastify/jwt'
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 import {
+  hasZodFastifySchemaValidationErrors,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { ZodError } from 'zod'
 
 import { routes } from '@/http/routes'
 
@@ -16,9 +16,12 @@ import { AppError } from './errors/app-error'
 import { MessageError } from './errors/message-error'
 import { ENV } from './utils/env'
 import { HTTP_STATUS } from './utils/http-status'
+import { parseValidationErrors } from './utils/parse-validation-errors'
 
 export class App {
-  server = Fastify().withTypeProvider<ZodTypeProvider>()
+  server = Fastify({
+    forceCloseConnections: true,
+  }).withTypeProvider<ZodTypeProvider>()
 
   constructor() {
     this.serializers()
@@ -54,29 +57,14 @@ export class App {
         res: FastifyReply,
       ) => {
         // Fastify validation error (schema validation)
-        if (err.statusCode === 400 && err.validation) {
-          const firstError = err.validation[0]
-          const errorMessage =
-            firstError?.message || MessageError.VALIDATION_ERROR
+        if (hasZodFastifySchemaValidationErrors(err)) {
+          const firstError = parseValidationErrors(err.validation)[0]
+          const errorMessage = firstError || MessageError.VALIDATION_ERROR
 
           const appError = new AppError({
             message: errorMessage,
             statusCode: HTTP_STATUS.BAD_REQUEST,
-            error: MessageError.BAD_REQUEST,
-          })
-          return res.status(HTTP_STATUS.BAD_REQUEST).send(appError.throwError())
-        }
-
-        if (err instanceof ZodError) {
-          const firstError = err.issues[0]
-          const errorMessage = firstError
-            ? firstError.message
-            : MessageError.VALIDATION_ERROR
-
-          const appError = new AppError({
-            message: errorMessage,
-            statusCode: HTTP_STATUS.BAD_REQUEST,
-            error: MessageError.BAD_REQUEST,
+            error: err.validation,
           })
           return res.status(HTTP_STATUS.BAD_REQUEST).send(appError.throwError())
         }
