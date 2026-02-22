@@ -12,7 +12,7 @@ import { UserService } from './user.service'
 export class UserController {
   constructor(
     @inject('UserService')
-    private readonly service: UserService,
+    private readonly userService: UserService,
   ) {}
 
   async findAll(
@@ -23,7 +23,7 @@ export class UserController {
   ) {
     const { query } = request
 
-    const users = await this.service.findAll({ filters: query })
+    const users = await this.userService.findAll({ filters: query })
     return reply.status(HTTP_STATUS.OK).send(users)
   }
 
@@ -35,7 +35,7 @@ export class UserController {
   ) {
     const { params } = request
 
-    const user = await this.service.findById(params.id)
+    const user = await this.userService.findById(params.id)
     return reply.status(HTTP_STATUS.OK).send(user)
   }
 
@@ -47,7 +47,7 @@ export class UserController {
   ) {
     const { body } = request
 
-    const user = await this.service.create(body)
+    const user = await this.userService.create(body)
     return reply.status(HTTP_STATUS.CREATED).send(user)
   }
 
@@ -60,7 +60,7 @@ export class UserController {
   ) {
     const { params, body } = request
 
-    const user = await this.service.update(params.id, body)
+    const user = await this.userService.update(params.id, body)
     return reply.status(HTTP_STATUS.OK).send(user)
   }
 
@@ -72,7 +72,7 @@ export class UserController {
   ) {
     const { params } = request
 
-    await this.service.delete(params.id)
+    await this.userService.delete(params.id)
     return reply.status(HTTP_STATUS.NO_CONTENT).send()
   }
 }

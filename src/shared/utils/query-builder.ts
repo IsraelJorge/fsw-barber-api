@@ -8,12 +8,17 @@ import {
   Table,
 } from 'drizzle-orm'
 
+type ColumnKeys<TTable> = {
+  [K in keyof TTable]: TTable[K] extends AnyColumn ? K : never
+}[keyof TTable] &
+  string
+
 export class QueryBuilder<TTable extends Table> {
   private readonly conditions: SQL[] = []
 
   constructor(private readonly table: TTable) {}
 
-  eq<K extends keyof TTable & string>(
+  eq<K extends ColumnKeys<TTable>>(
     field: K,
     value: TTable[K] extends AnyColumn
       ? GetColumnData<TTable[K]> | undefined
@@ -25,19 +30,17 @@ export class QueryBuilder<TTable extends Table> {
     return this
   }
 
-  ilike<K extends keyof TTable & string>(
+  ilike<K extends ColumnKeys<TTable>>(
     field: K,
     value: string | undefined,
   ): this {
-    if (value !== undefined) {
-      this.conditions.push(
-        drizzleIlike(this.table[field] as AnyColumn, `%${value}%`),
-      )
+    if (value !== undefined && !value.includes('undefined')) {
+      this.conditions.push(drizzleIlike(this.table[field] as AnyColumn, value))
     }
     return this
   }
 
-  isNull<K extends keyof TTable & string>(field: K): this {
+  isNull<K extends ColumnKeys<TTable>>(field: K): this {
     this.conditions.push(drizzleIsNull(this.table[field] as AnyColumn))
     return this
   }

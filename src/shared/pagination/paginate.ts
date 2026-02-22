@@ -62,7 +62,7 @@ export async function withPagination<
 
   return paginate<TRow>({
     data,
-    total,
+    total: Number(total),
     options: { page, limit },
   })
 }

@@ -2,10 +2,13 @@ import { FastifyInstance } from 'fastify'
 import { container } from 'tsyringe'
 
 import { IdSchema } from '@/shared/schemas/id.schema'
-import { PaginationSchema } from '@/shared/schemas/pagination.schema'
 
 import { UserController } from './user.controller'
-import { CreateUserSchema, UpdateUserSchema } from './user.schema'
+import {
+  CreateUserSchema,
+  UpdateUserSchema,
+  UserFiltersSchema,
+} from './user.schema'
 
 export function userRoutes(app: FastifyInstance) {
   const controller = container.resolve(UserController)
@@ -15,7 +18,7 @@ export function userRoutes(app: FastifyInstance) {
     {
       schema: {
         tags: ['Users'],
-        querystring: PaginationSchema,
+        querystring: UserFiltersSchema,
       },
     },
     controller.findAll.bind(controller),

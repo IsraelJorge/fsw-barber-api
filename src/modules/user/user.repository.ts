@@ -4,17 +4,28 @@ import { injectable } from 'tsyringe'
 import { db } from '@/db'
 import { User, userTable } from '@/db/schemas/user'
 import { PaginationParams, withPagination } from '@/shared/pagination'
+import { QueryBuilder } from '@/shared/utils/query-builder'
 
-import type { CreateUserInput, UpdateUserInput } from './user.schema'
+import type {
+  CreateUserInput,
+  UpdateUserInput,
+  UserFilters,
+} from './user.schema'
 
 @injectable()
 export class UserRepository {
-  async findAll({ filters }: PaginationParams) {
+  async findAll({ filters }: PaginationParams<UserFilters>) {
+    const where = new QueryBuilder(userTable)
+      .ilike('name', `${filters.name}%`)
+      .ilike('email', `${filters.email}%`)
+      .build()
+
     return withPagination<User>({
       db,
       table: userTable,
       orderByColumn: desc(userTable.createdAt),
       pagination: { page: filters.page, limit: filters.limit },
+      where,
     })
   }
 

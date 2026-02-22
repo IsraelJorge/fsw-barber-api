@@ -12,6 +12,7 @@ import { ZodError } from 'zod'
 import { routes } from '@/http/routes'
 
 import { AppError } from './errors/app-error'
+import { MessageError } from './errors/message-error'
 import { HTTP_STATUS } from './utils/http-status'
 
 export class App {
@@ -45,12 +46,13 @@ export class App {
         // Fastify validation error (schema validation)
         if (err.statusCode === 400 && err.validation) {
           const firstError = err.validation[0]
-          const errorMessage = firstError?.message || 'Validation error'
+          const errorMessage =
+            firstError?.message || MessageError.VALIDATION_ERROR
 
           const appError = new AppError({
             message: errorMessage,
             statusCode: HTTP_STATUS.BAD_REQUEST,
-            error: 'Bad Request',
+            error: MessageError.BAD_REQUEST,
           })
           return res.status(HTTP_STATUS.BAD_REQUEST).send(appError.throwError())
         }
@@ -59,12 +61,12 @@ export class App {
           const firstError = err.issues[0]
           const errorMessage = firstError
             ? firstError.message
-            : 'Validation error'
+            : MessageError.VALIDATION_ERROR
 
           const appError = new AppError({
             message: errorMessage,
             statusCode: HTTP_STATUS.BAD_REQUEST,
-            error: 'Bad Request',
+            error: MessageError.BAD_REQUEST,
           })
           return res.status(HTTP_STATUS.BAD_REQUEST).send(appError.throwError())
         }
