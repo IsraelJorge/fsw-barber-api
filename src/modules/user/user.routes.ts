@@ -1,20 +1,26 @@
 import { FastifyInstance } from 'fastify'
 import { container } from 'tsyringe'
 
-import { authenticate } from '@/shared/middlewares/authenticate'
-import { IdSchema } from '@/shared/schemas/id.schema'
+import { authenticate } from '@/http/middlewares/authenticate'
+import { PaginationFilter } from '@/shared/pagination'
+import { IdInput, IdSchema } from '@/shared/schemas/id.schema'
 
 import { UserController } from './user.controller'
 import {
+  CreateUserInput,
   CreateUserSchema,
+  UpdateUserInput,
   UpdateUserSchema,
+  UserFilters,
   UserFiltersSchema,
 } from './user.schema'
 
 export function userRoutes(app: FastifyInstance) {
   const controller = container.resolve(UserController)
 
-  app.get(
+  app.get<{
+    Querystring: PaginationFilter<UserFilters>
+  }>(
     '/users',
     {
       preHandler: [authenticate],
@@ -23,10 +29,12 @@ export function userRoutes(app: FastifyInstance) {
         querystring: UserFiltersSchema,
       },
     },
-    controller.findAll.bind(controller),
+    (request, reply) => controller.findAll(request, reply),
   )
 
-  app.get(
+  app.get<{
+    Params: IdInput
+  }>(
     '/users/:id',
     {
       preHandler: [authenticate],
@@ -35,10 +43,12 @@ export function userRoutes(app: FastifyInstance) {
         params: IdSchema,
       },
     },
-    controller.findById.bind(controller),
+    (request, reply) => controller.findById(request, reply),
   )
 
-  app.post(
+  app.post<{
+    Body: CreateUserInput
+  }>(
     '/users',
     {
       schema: {
@@ -46,10 +56,13 @@ export function userRoutes(app: FastifyInstance) {
         body: CreateUserSchema,
       },
     },
-    controller.create.bind(controller),
+    (request, reply) => controller.create(request, reply),
   )
 
-  app.put(
+  app.put<{
+    Params: IdInput
+    Body: UpdateUserInput
+  }>(
     '/users/:id',
     {
       preHandler: [authenticate],
@@ -59,10 +72,12 @@ export function userRoutes(app: FastifyInstance) {
         body: UpdateUserSchema,
       },
     },
-    controller.update.bind(controller),
+    (request, reply) => controller.update(request, reply),
   )
 
-  app.delete(
+  app.delete<{
+    Params: IdInput
+  }>(
     '/users/:id',
     {
       preHandler: [authenticate],
@@ -71,6 +86,6 @@ export function userRoutes(app: FastifyInstance) {
         params: IdSchema,
       },
     },
-    controller.delete.bind(controller),
+    (request, reply) => controller.delete(request, reply),
   )
 }

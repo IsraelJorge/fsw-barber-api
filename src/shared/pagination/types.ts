@@ -10,11 +10,11 @@ export type Pagination<T> = {
   meta: PaginationMeta
 }
 
-export type PaginationOptions = {
+export type PaginationFilter<T = unknown> = T & {
   page: number
   limit: number
 }
 
 export type PaginationParams<T = unknown> = {
-  filters: T & PaginationOptions
+  filters: T & PaginationFilter
 }

@@ -1,11 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { inject, injectable } from 'tsyringe'
 
-import { PaginationOptions } from '@/shared/pagination/types'
+import { PaginationFilter } from '@/shared/pagination'
 import { IdInput } from '@/shared/schemas/id.schema'
 import { HTTP_STATUS } from '@/shared/utils/http-status'
 
-import type { CreateUserInput, UpdateUserInput } from './user.schema'
+import type {
+  CreateUserInput,
+  UpdateUserInput,
+  UserFilters,
+} from './user.schema'
 import { UserService } from './user.service'
 
 @injectable()
@@ -17,7 +21,7 @@ export class UserController {
 
   async findAll(
     request: FastifyRequest<{
-      Querystring: PaginationOptions
+      Querystring: PaginationFilter<UserFilters>
     }>,
     reply: FastifyReply,
   ) {

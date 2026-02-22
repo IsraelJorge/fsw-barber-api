@@ -2,12 +2,12 @@
 import { SQL, sql, Table } from 'drizzle-orm'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
-import type { Pagination, PaginationOptions } from './types'
+import type { Pagination, PaginationFilter } from './types'
 
 type PaginateParams<T> = {
   data: T[]
   total: number
-  options: PaginationOptions
+  options: PaginationFilter
 }
 
 export function paginate<T>({
@@ -33,7 +33,7 @@ export interface WithPaginationParams<
   table: Table
   orderByColumn: SQL
   where?: SQL
-  pagination: PaginationOptions
+  pagination: PaginationFilter
 }
 
 export async function withPagination<

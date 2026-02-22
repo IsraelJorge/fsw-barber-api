@@ -2,12 +2,14 @@ import { FastifyInstance } from 'fastify'
 import { container } from 'tsyringe'
 
 import { AuthController } from './auth.controller'
-import { LoginSchema } from './auth.schema'
+import { LoginInput, LoginSchema } from './auth.schema'
 
 export function authRoutes(app: FastifyInstance) {
   const controller = container.resolve(AuthController)
 
-  app.post(
+  app.post<{
+    Body: LoginInput
+  }>(
     '/login',
     {
       schema: {
@@ -15,6 +17,6 @@ export function authRoutes(app: FastifyInstance) {
         body: LoginSchema,
       },
     },
-    controller.login.bind(controller),
+    (request, reply) => controller.login(request, reply),
   )
 }
