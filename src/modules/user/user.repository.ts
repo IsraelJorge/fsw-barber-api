@@ -2,7 +2,7 @@ import { desc, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db } from '@/db'
-import { User, userTable } from '@/db/schemas/user'
+import { userTable } from '@/db/schemas/user'
 import { PaginationParams, withPagination } from '@/shared/pagination'
 import { QueryBuilder } from '@/shared/utils/query-builder'
 
@@ -20,7 +20,7 @@ export class UserRepository {
       .ilike('email', `${filters.email}%`)
       .build()
 
-    return withPagination<User>({
+    return withPagination({
       db,
       table: userTable,
       orderByColumn: desc(userTable.createdAt),

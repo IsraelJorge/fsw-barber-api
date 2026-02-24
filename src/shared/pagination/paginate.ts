@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SQL, sql, Table } from 'drizzle-orm'
+import { InferSelectModel, SQL, sql, Table } from 'drizzle-orm'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
 import type { Pagination, PaginationFilter } from './types'
@@ -28,41 +28,48 @@ export function paginate<T>({
 
 export interface WithPaginationParams<
   TSchema extends Record<string, unknown> = any,
+  TTable extends Table = Table,
+  TColumns extends Partial<TTable['_']['columns']> = TTable['_']['columns'],
 > {
   db: PostgresJsDatabase<TSchema>
-  table: Table
+  table: TTable
+  columns?: TColumns
   orderByColumn: SQL
   where?: SQL
   pagination: PaginationFilter
 }
 
 export async function withPagination<
-  TRow extends Record<string, unknown>,
   TSchema extends Record<string, unknown> = any,
+  TTable extends Table = Table,
+  TColumns extends Partial<TTable['_']['columns']> = TTable['_']['columns'],
 >({
   db,
   table,
+  columns,
   orderByColumn,
   pagination: { page, limit },
   where,
-}: WithPaginationParams<TSchema>): Promise<Pagination<TRow>> {
+}: WithPaginationParams<TSchema, TTable, TColumns>): Promise<
+  Pagination<InferSelectModel<TTable>>
+> {
   const data = (await db
-    .select()
-    .from(table)
+    .select(columns as any)
+    .from(table as any)
     .$dynamic()
     .where(where)
     .orderBy(orderByColumn)
     .limit(limit)
-    .offset((page - 1) * limit)) as TRow[]
+    .offset((page - 1) * limit)) as InferSelectModel<TTable>[]
 
   const countQuery = db
     .select({ total: sql<number>`count(*)` })
-    .from(table)
+    .from(table as any)
     .$dynamic()
 
   const [{ total }] = where ? await countQuery.where(where) : await countQuery
 
-  return paginate<TRow>({
+  return paginate<InferSelectModel<TTable>>({
     data,
     total: Number(total),
     options: { page, limit },
