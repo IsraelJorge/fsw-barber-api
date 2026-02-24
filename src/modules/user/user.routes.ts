@@ -13,6 +13,8 @@ import {
   UpdateUserSchema,
   UserFilters,
   UserFiltersSchema,
+  UserPaginationResponseSchema,
+  UserSchemaResponse,
 } from './user.schema'
 
 export function userRoutes(app: FastifyInstance) {
@@ -27,6 +29,9 @@ export function userRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Users'],
         querystring: UserFiltersSchema,
+        response: {
+          200: UserPaginationResponseSchema,
+        },
       },
     },
     (request, reply) => controller.findAll(request, reply),
@@ -41,6 +46,9 @@ export function userRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Users'],
         params: IdSchema,
+        response: {
+          200: UserSchemaResponse,
+        },
       },
     },
     (request, reply) => controller.findById(request, reply),
@@ -54,6 +62,9 @@ export function userRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Users'],
         body: CreateUserSchema,
+        response: {
+          201: UserSchemaResponse,
+        },
       },
     },
     (request, reply) => controller.create(request, reply),
@@ -70,6 +81,9 @@ export function userRoutes(app: FastifyInstance) {
         tags: ['Users'],
         params: IdSchema,
         body: UpdateUserSchema,
+        response: {
+          200: UserSchemaResponse,
+        },
       },
     },
     (request, reply) => controller.update(request, reply),

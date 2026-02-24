@@ -1,6 +1,9 @@
 import { z } from 'zod'
 
-import { PaginationSchema } from '@/shared/schemas/pagination.schema'
+import {
+  PaginationResponseSchema,
+  PaginationSchema,
+} from '@/shared/schemas/pagination.schema'
 
 export const RoleEnum = z.enum(['ADMIN', 'USER', 'BARBER'])
 
@@ -8,21 +11,27 @@ export const CreateUserSchema = z.object({
   name: z.string().min(1),
   email: z.email(),
   password: z.string().min(6).optional(),
-  avatar: z.url(),
+  avatar: z.string().optional(),
 })
 
 export const UpdateUserSchema = CreateUserSchema.partial()
 
 export const UserSchemaResponse = z.object({
-  id: z.uuid(),
+  id: z.string(),
   name: z.string().min(1),
   email: z.email(),
-  avatar: z.url(),
+  avatar: z.string(),
   role: RoleEnum,
   createdAt: z.date(),
-  updatedAt: z.date().optional(),
-  deletedAt: z.date().optional(),
+  updatedAt: z.date().nullish(),
+  deletedAt: z.date().nullish(),
 })
+
+export const UserPaginationResponseSchema = z
+  .object({
+    data: UserSchemaResponse.array(),
+  })
+  .extend(PaginationResponseSchema.shape)
 
 export const UserFiltersSchema = PaginationSchema.extend({
   name: z.string().optional(),

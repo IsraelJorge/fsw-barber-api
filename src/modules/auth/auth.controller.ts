@@ -27,7 +27,7 @@ export class AuthController {
         name: user.name,
         role: user.role,
       },
-      { sub: user.id },
+      { sub: user.id, expiresIn: '1d' },
     )
 
     return reply.status(HTTP_STATUS.OK).send({ user, token })
