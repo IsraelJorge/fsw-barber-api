@@ -13,16 +13,16 @@ import type {
   UserFilters,
 } from './user.schema'
 
-const columns = selectColumns(userTable)((t) => ({
-  id: t.id,
-  name: t.name,
-  email: t.email,
-  avatar: t.avatar,
-  role: t.role,
-  createdAt: t.createdAt,
-  updatedAt: t.updatedAt,
-  deletedAt: t.deletedAt,
-}))
+const columns = selectColumns(userTable)({
+  id: true,
+  name: true,
+  email: true,
+  avatar: true,
+  role: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+})
 
 @injectable()
 export class UserRepository {
