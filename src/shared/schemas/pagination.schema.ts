@@ -1,8 +1,10 @@
 import { z } from 'zod'
 
+import { CONSTANTS } from '../utils/constants'
+
 export const PaginationSchema = z.object({
-  page: z.coerce.number().default(1),
-  limit: z.coerce.number().default(10),
+  page: z.coerce.number().default(CONSTANTS.DEFAULT_PAGE),
+  limit: z.coerce.number().default(CONSTANTS.DEFAULT_LIMIT),
 })
 
 const MetaSchema = PaginationSchema.extend({

@@ -8,8 +8,6 @@ import { IdInput, IdSchema } from '@/shared/schemas/id.schema'
 import { BarberShopController } from './barber-shop.controller'
 import {
   BarberShopFilters,
-  BarberShopFiltersSchema,
-  BarberShopPaginationResponseSchema,
   BarberShopSchemaResponse,
   CreateBarberShopInput,
   CreateBarberShopSchema,
@@ -27,10 +25,10 @@ export function barberShopRoutes(app: FastifyInstance) {
     {
       schema: {
         tags: ['Barber Shops'],
-        querystring: BarberShopFiltersSchema,
-        response: {
-          200: BarberShopPaginationResponseSchema,
-        },
+        // querystring: BarberShopFiltersSchema,
+        // response: {
+        //   200: BarberShopPaginationResponseSchema,
+        // },
       },
     },
     (request, reply) => controller.findAll(request, reply),

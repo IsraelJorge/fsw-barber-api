@@ -5,7 +5,10 @@ import { db } from '@/db'
 import { userTable } from '@/db/schemas/user'
 import { PaginationParams, withPagination } from '@/shared/pagination'
 import { QueryBuilder } from '@/shared/utils/query-builder'
-import { selectColumns } from '@/shared/utils/select-columns'
+import {
+  selectColumnsQueryBuilder,
+  SelectedColumns,
+} from '@/shared/utils/select-columns'
 
 import type {
   CreateUserInput,
@@ -13,7 +16,7 @@ import type {
   UserFilters,
 } from './user.schema'
 
-const columns = selectColumns(userTable)({
+const selectedColumns = {
   id: true,
   name: true,
   email: true,
@@ -22,7 +25,9 @@ const columns = selectColumns(userTable)({
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-})
+} as const satisfies SelectedColumns<typeof userTable>
+
+const columns = selectColumnsQueryBuilder(userTable)(selectedColumns)
 
 @injectable()
 export class UserRepository {
@@ -35,10 +40,13 @@ export class UserRepository {
     return withPagination({
       db,
       table: userTable,
-      columns,
-      orderByColumn: desc(userTable.createdAt),
+      query: 'userTable',
+      queryConfig: {
+        columns: selectedColumns,
+        orderBy: [desc(userTable.createdAt)],
+        where,
+      },
       pagination: { page: filters.page, limit: filters.limit },
-      where,
     })
   }
 

@@ -5,7 +5,10 @@ import { db, DbTransaction } from '@/db'
 import { barberShopTable } from '@/db/schemas/barber-shop'
 import { PaginationParams, withPagination } from '@/shared/pagination'
 import { QueryBuilder } from '@/shared/utils/query-builder'
-import { selectColumns } from '@/shared/utils/select-columns'
+import {
+  selectColumnsQueryBuilder,
+  SelectedColumns,
+} from '@/shared/utils/select-columns'
 
 import type {
   BarberShopFilters,
@@ -13,7 +16,7 @@ import type {
   UpdateBarberShopInput,
 } from './barber-shop.schema'
 
-const columns = selectColumns(barberShopTable)({
+const selectedColumns = {
   id: true,
   name: true,
   description: true,
@@ -28,7 +31,9 @@ const columns = selectColumns(barberShopTable)({
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-})
+} as const satisfies SelectedColumns<typeof barberShopTable>
+
+const columns = selectColumnsQueryBuilder(barberShopTable)(selectedColumns)
 
 @injectable()
 export class BarberShopRepository {
@@ -44,10 +49,21 @@ export class BarberShopRepository {
     return withPagination({
       db,
       table: barberShopTable,
-      columns,
-      orderByColumn: desc(barberShopTable.createdAt),
+      query: 'barberShopTable',
+      queryConfig: {
+        columns: selectedColumns,
+        orderBy: [desc(barberShopTable.createdAt)],
+        where,
+        with: {
+          barberShopHours: true,
+          barberShopPhones: {
+            columns: {
+              phone: true,
+            },
+          },
+        },
+      },
       pagination: { page: filters.page, limit: filters.limit },
-      where,
     })
   }
 

@@ -3,9 +3,9 @@ import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
 import { barberShopPhoneTable } from '@/db/schemas/barber-shop-phone'
-import { selectColumns } from '@/shared/utils/select-columns'
+import { selectColumnsQueryBuilder } from '@/shared/utils/select-columns'
 
-const columns = selectColumns(barberShopPhoneTable)({
+const columns = selectColumnsQueryBuilder(barberShopPhoneTable)({
   id: true,
   barberShopId: true,
   phone: true,

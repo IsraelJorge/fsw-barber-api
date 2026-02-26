@@ -50,7 +50,7 @@ type SelectColumnsResult<
  * })
  * ```
  */
-export function selectColumns<TTable extends Table>(table: TTable) {
+export function selectColumnsQueryBuilder<TTable extends Table>(table: TTable) {
   return function <
     TSelector extends BooleanSelector<TTable> | CallbackSelector<TTable>,
   >(selector: TSelector): SelectColumnsResult<TTable, TSelector> {
@@ -67,3 +67,17 @@ export function selectColumns<TTable extends Table>(table: TTable) {
     return result as never
   }
 }
+
+/**
+ * Utility type to type-check boolean column selectors without losing literal types.
+ *
+ * Example:
+ * ```ts
+ * const columns = {
+ *   id: true,
+ * } as const satisfies SelectedColumns<typeof userTable>
+ * ```
+ */
+export type SelectedColumns<TTable extends Table> = Partial<
+  Record<keyof TTable['_']['columns'], true>
+>

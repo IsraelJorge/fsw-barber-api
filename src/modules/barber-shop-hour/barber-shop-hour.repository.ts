@@ -3,18 +3,23 @@ import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
 import { barberShopHourTable } from '@/db/schemas/barber-shop-hour'
-import { selectColumns } from '@/shared/utils/select-columns'
+import {
+  selectColumnsQueryBuilder,
+  SelectedColumns,
+} from '@/shared/utils/select-columns'
 
 import { CreateBarberShopHourInput } from './barber-shop-hour.schema'
 
-const columns = selectColumns(barberShopHourTable)({
+const selectedColumns = {
   id: true,
   barberShopId: true,
   dayOfWeek: true,
   openTime: true,
   closeTime: true,
   isClosed: true,
-})
+} as const satisfies SelectedColumns<typeof barberShopHourTable>
+
+const columns = selectColumnsQueryBuilder(barberShopHourTable)(selectedColumns)
 
 @injectable()
 export class BarberShopHourRepository {

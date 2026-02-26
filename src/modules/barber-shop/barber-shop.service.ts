@@ -105,12 +105,9 @@ export class BarberShopService {
         tx,
       )
 
-      if (phones) {
+      if (phones && phones.length > 0) {
         await this.barberShopPhoneRepository.deleteByBarberShopId(id, tx)
-
-        if (phones.length > 0) {
-          await this.barberShopPhoneRepository.createMany(id, phones, tx)
-        }
+        await this.barberShopPhoneRepository.createMany(id, phones, tx)
       }
 
       if (hours && hours.length > 0) {
