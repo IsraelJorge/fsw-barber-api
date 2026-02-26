@@ -12,6 +12,7 @@
     "lint:fix": "eslint --fix --ext ts src && prettier --write src",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file .env --no-warnings src/db/seed.ts",
     "typecheck": "tsc --noEmit"
