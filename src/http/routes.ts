@@ -5,6 +5,7 @@ import {
 } from 'fastify'
 
 import { authRoutes } from '@/modules/auth/auth.routes'
+import { barberShopRoutes } from '@/modules/barber-shop/barber-shop.routes'
 import { userRoutes } from '@/modules/user/user.routes'
 
 export function routes(
@@ -14,6 +15,7 @@ export function routes(
 ) {
   app.register(authRoutes)
   app.register(userRoutes)
+  app.register(barberShopRoutes)
 
   done()
 }

@@ -8,6 +8,18 @@ const getUrlAvatar = () => {
   return `https://i.pravatar.cc/150?u=${id}`
 }
 
+const getShopImage = () => {
+  const images = [
+    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1512496015851-a1fbbfc6d1e9?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&q=80&w=800',
+  ]
+  return images[Math.floor(Math.random() * images.length)]
+}
+
 async function main() {
   await reset(db, schemas)
 
@@ -29,6 +41,59 @@ async function main() {
           }),
           updatedAt: f.default({ defaultValue: null }),
           deletedAt: f.default({ defaultValue: null }),
+        },
+      },
+      barberShopTable: {
+        count: 5,
+        columns: {
+          name: f.valuesFromArray({
+            values: [
+              'Barbearia VIP',
+              'Corte de Ouro',
+              'The Classic Barber',
+              'Estilo & Arte',
+              'Navalha de Ouro',
+            ],
+          }),
+          description: f.valuesFromArray({
+            values: [
+              'A melhor barbearia da cidade.',
+              'Estilo e elegância em um só lugar.',
+              'Corte clássico e moderno para cavalheiros.',
+              'Sua melhor experiência em barbearia.',
+              'Tradição, qualidade e respeito.',
+            ],
+          }),
+          imageUrl: f.valuesFromArray({
+            values: Array.from({ length: 5 }, getShopImage),
+          }),
+          updatedAt: f.default({ defaultValue: null }),
+          deletedAt: f.default({ defaultValue: null }),
+        },
+      },
+      barberShopPhoneTable: {
+        count: 10,
+        columns: {
+          phone: f.valuesFromArray({
+            values: [
+              '(11) 99999-9999',
+              '(11) 98888-8888',
+              '(11) 97777-7777',
+              '(11) 96666-6666',
+            ],
+          }),
+        },
+      },
+      barberShopHourTable: {
+        count: 35,
+        columns: {
+          dayOfWeek: f.valuesFromArray({ values: [0, 1, 2, 3, 4, 5, 6] }),
+          openTime: f.default({ defaultValue: '09:00' }),
+          closeTime: f.default({ defaultValue: '18:00' }),
+          isClosed: f.weightedRandom([
+            { value: f.default({ defaultValue: false }), weight: 0.8 },
+            { value: f.default({ defaultValue: true }), weight: 0.2 },
+          ]),
         },
       },
     }

@@ -1,5 +1,6 @@
 export const MessageError = {
   USER_NOT_FOUND: 'User not found',
+  BARBER_SHOP_NOT_FOUND: 'Barber shop not found',
   USER_ALREADY_EXISTS: 'User already exists',
   INVALID_CREDENTIALS: 'Invalid credentials',
   BAD_REQUEST: 'Bad request',
