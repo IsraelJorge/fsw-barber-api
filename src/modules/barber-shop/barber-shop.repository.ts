@@ -3,7 +3,7 @@ import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
 import { barberShopTable } from '@/db/schemas/barber-shop'
-import { PaginationParams, withPagination } from '@/shared/pagination'
+import { PaginationParams } from '@/shared/pagination'
 import { QueryBuilder } from '@/shared/utils/query-builder'
 import {
   selectColumnsQueryBuilder,
@@ -46,11 +46,10 @@ export class BarberShopRepository {
       .eq('barberUserId', filters.barberUserId)
       .build()
 
-    return withPagination({
-      db,
-      table: barberShopTable,
-      query: 'barberShopTable',
-      queryConfig: {
+    return db.paginate({
+      table: 'barberShopTable',
+      drizzleTable: barberShopTable,
+      config: {
         columns: selectedColumns,
         orderBy: [desc(barberShopTable.createdAt)],
         where,
@@ -68,10 +67,18 @@ export class BarberShopRepository {
   }
 
   async findById(id: string) {
-    const [barberShop] = await db
-      .select(columns)
-      .from(barberShopTable)
-      .where(eq(barberShopTable.id, id))
+    const barberShop = await db.findFirst({
+      table: 'barberShopTable',
+      config: {
+        columns: selectedColumns,
+        where: eq(barberShopTable.id, id),
+        with: {
+          barberShopHours: true,
+          barberShopPhones: true,
+        },
+      },
+    })
+
     return barberShop
   }
 
@@ -80,7 +87,7 @@ export class BarberShopRepository {
     tx?: DbTransaction,
   ) {
     const dbInstance = tx || db
-    const [barberShop] = await dbInstance
+    const [barberShop] = await dbInstance.raw
       .insert(barberShopTable)
       .values(data)
       .returning(columns)
@@ -96,12 +103,12 @@ export class BarberShopRepository {
     const dbInstance = tx || db
     const [barberShop] =
       Object.keys(data).length > 0
-        ? await dbInstance
+        ? await dbInstance.raw
             .update(barberShopTable)
             .set({ ...data, updatedAt: new Date() })
             .where(eq(barberShopTable.id, id))
             .returning(columns)
-        : await dbInstance
+        : await dbInstance.raw
             .select(columns)
             .from(barberShopTable)
             .where(eq(barberShopTable.id, id))
@@ -111,7 +118,7 @@ export class BarberShopRepository {
 
   async delete(id: string, tx?: DbTransaction) {
     const dbInstance = tx || db
-    return await dbInstance
+    return await dbInstance.raw
       .update(barberShopTable)
       .set({ deletedAt: new Date() })
       .where(eq(barberShopTable.id, id))

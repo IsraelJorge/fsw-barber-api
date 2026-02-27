@@ -4,11 +4,15 @@ import postgres from 'postgres'
 import { schemas } from '@/db/schemas'
 import { ENV } from '@/shared/utils/env'
 
+import { Database } from './database'
+
 export const sql = postgres(ENV.DB_URL)
 
-export const db = drizzle(sql, {
+const drizzleDb = drizzle(sql, {
   schema: schemas,
   casing: 'snake_case',
 })
 
-export type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
+export const db = new Database(drizzleDb)
+
+export type DbTransaction = typeof db

@@ -8,7 +8,6 @@ import { IdInput, IdSchema } from '@/shared/schemas/id.schema'
 import { BarberShopController } from './barber-shop.controller'
 import {
   BarberShopFilters,
-  BarberShopSchemaResponse,
   CreateBarberShopInput,
   CreateBarberShopSchema,
   UpdateBarberShopInput,
@@ -42,9 +41,9 @@ export function barberShopRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Barber Shops'],
         params: IdSchema,
-        response: {
-          200: BarberShopSchemaResponse,
-        },
+        // response: {
+        //   200: BarberShopSchemaResponse,
+        // },
       },
     },
     (request, reply) => controller.findById(request, reply),
@@ -59,9 +58,9 @@ export function barberShopRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Barber Shops'],
         body: CreateBarberShopSchema,
-        response: {
-          201: BarberShopSchemaResponse,
-        },
+        // response: {
+        //   201: BarberShopSchemaResponse,
+        // },
       },
     },
     (request, reply) => controller.create(request, reply),
@@ -78,9 +77,9 @@ export function barberShopRoutes(app: FastifyInstance) {
         tags: ['Barber Shops'],
         params: IdSchema,
         body: UpdateBarberShopSchema,
-        response: {
-          200: BarberShopSchemaResponse,
-        },
+        // response: {
+        //   200: BarberShopSchemaResponse,
+        // },
       },
     },
     (request, reply) => controller.update(request, reply),

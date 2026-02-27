@@ -18,3 +18,9 @@ export type PaginationFilter<T = unknown> = T & {
 export type PaginationParams<T = unknown> = {
   filters: T & PaginationFilter
 }
+
+export type PaginateParams<T> = {
+  data: T[]
+  total: number
+  options: PaginationFilter
+}

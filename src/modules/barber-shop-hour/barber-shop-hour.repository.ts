@@ -24,7 +24,7 @@ const columns = selectColumnsQueryBuilder(barberShopHourTable)(selectedColumns)
 @injectable()
 export class BarberShopHourRepository {
   async findByBarberShopId(barberShopId: string) {
-    return await db
+    return await db.raw
       .select(columns)
       .from(barberShopHourTable)
       .where(eq(barberShopHourTable.barberShopId, barberShopId))
@@ -38,7 +38,7 @@ export class BarberShopHourRepository {
     if (!hours || hours.length === 0) return []
 
     const dbInstance = tx || db
-    return await dbInstance
+    return await dbInstance.raw
       .insert(barberShopHourTable)
       .values(
         hours.map((hour) => ({
@@ -55,7 +55,7 @@ export class BarberShopHourRepository {
     tx?: DbTransaction,
   ) {
     const dbInstance = tx || db
-    const [hour] = await dbInstance
+    const [hour] = await dbInstance.raw
       .update(barberShopHourTable)
       .set(data)
       .where(

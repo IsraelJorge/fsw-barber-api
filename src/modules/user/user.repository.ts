@@ -3,7 +3,7 @@ import { injectable } from 'tsyringe'
 
 import { db } from '@/db'
 import { userTable } from '@/db/schemas/user'
-import { PaginationParams, withPagination } from '@/shared/pagination'
+import { PaginationParams } from '@/shared/pagination'
 import { QueryBuilder } from '@/shared/utils/query-builder'
 import {
   selectColumnsQueryBuilder,
@@ -37,11 +37,10 @@ export class UserRepository {
       .ilike('email', `${filters.email}%`)
       .build()
 
-    return withPagination({
-      db,
-      table: userTable,
-      query: 'userTable',
-      queryConfig: {
+    return db.paginate({
+      table: 'userTable',
+      drizzleTable: userTable,
+      config: {
         columns: selectedColumns,
         orderBy: [desc(userTable.createdAt)],
         where,
@@ -51,7 +50,7 @@ export class UserRepository {
   }
 
   async findById(id: string) {
-    const [user] = await db
+    const [user] = await db.raw
       .select(columns)
       .from(userTable)
       .where(eq(userTable.id, id))
@@ -59,7 +58,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    const [user] = await db
+    const [user] = await db.raw
       .select(columns)
       .from(userTable)
       .where(eq(userTable.email, email))
@@ -67,12 +66,15 @@ export class UserRepository {
   }
 
   async create(data: CreateUserInput) {
-    const [user] = await db.insert(userTable).values(data).returning(columns)
+    const [user] = await db.raw
+      .insert(userTable)
+      .values(data)
+      .returning(columns)
     return user
   }
 
   async update(id: string, data: UpdateUserInput) {
-    const [user] = await db
+    const [user] = await db.raw
       .update(userTable)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(userTable.id, id))
@@ -81,7 +83,7 @@ export class UserRepository {
   }
 
   async delete(id: string) {
-    return await db
+    return await db.raw
       .update(userTable)
       .set({ deletedAt: new Date() })
       .where(eq(userTable.id, id))

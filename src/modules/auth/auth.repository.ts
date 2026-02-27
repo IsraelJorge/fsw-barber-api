@@ -7,7 +7,7 @@ import { userTable } from '@/db/schemas/user'
 @injectable()
 export class AuthRepository {
   async findByEmail(email: string) {
-    const [user] = await db
+    const [user] = await db.raw
       .select()
       .from(userTable)
       .where(eq(userTable.email, email))
