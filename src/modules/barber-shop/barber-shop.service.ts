@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 
-import { db } from '@/db'
+import { IDatabase } from '@/db'
 import { BarberShopHourRepository } from '@/modules/barber-shop-hour/barber-shop-hour.repository'
 import { BarberShopPhoneRepository } from '@/modules/barber-shop-phone/barber-shop-phone.repository'
 import { UserRepository } from '@/modules/user/user.repository'
@@ -27,6 +27,8 @@ export class BarberShopService {
     private readonly barberShopPhoneRepository: BarberShopPhoneRepository,
     @inject('BarberShopHourRepository')
     private readonly barberShopHourRepository: BarberShopHourRepository,
+    @inject('Database')
+    private readonly db: IDatabase,
   ) {}
 
   async findAll(params: PaginationParams<BarberShopFilters>) {
@@ -55,7 +57,7 @@ export class BarberShopService {
 
     const { phones, hours, ...barberShopData } = data
 
-    return await db.transaction(async (tx) => {
+    return await this.db.transaction(async (tx) => {
       const barberShop = await this.barberShopRepository.create(
         barberShopData,
         tx,
@@ -98,7 +100,7 @@ export class BarberShopService {
 
     const { phones, hours, ...barberShopData } = data
 
-    return await db.transaction(async (tx) => {
+    return await this.db.transaction(async (tx) => {
       const updatedBarberShop = await this.barberShopRepository.update(
         id,
         barberShopData,

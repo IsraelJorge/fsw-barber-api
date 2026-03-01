@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { db, DbTransaction } from '@/db'
+import { IDatabase } from '@/db'
 import { selectColumnsQueryBuilder } from '@/db/helpers/select-columns'
 import { barberShopPhoneTable } from '@/db/schemas/barber-shop-phone'
 
@@ -14,18 +14,23 @@ const columns = selectColumnsQueryBuilder(barberShopPhoneTable)({
 
 @injectable()
 export class BarberShopPhoneRepository {
+  constructor(
+    @inject('Database')
+    private readonly db: IDatabase,
+  ) {}
+
   async findByBarberShopId(barberShopId: string) {
-    return await db.raw
+    return await this.db.raw
       .select(columns)
       .from(barberShopPhoneTable)
       .where(eq(barberShopPhoneTable.barberShopId, barberShopId))
       .orderBy(desc(barberShopPhoneTable.createdAt))
   }
 
-  async createMany(barberShopId: string, phones: string[], tx?: DbTransaction) {
+  async createMany(barberShopId: string, phones: string[], tx?: IDatabase) {
     if (!phones || phones.length === 0) return []
 
-    const dbInstance = tx || db
+    const dbInstance = tx || this.db
     return await dbInstance.raw
       .insert(barberShopPhoneTable)
       .values(
@@ -37,8 +42,8 @@ export class BarberShopPhoneRepository {
       .returning(columns)
   }
 
-  async deleteByBarberShopId(barberShopId: string, tx?: DbTransaction) {
-    const dbInstance = tx || db
+  async deleteByBarberShopId(barberShopId: string, tx?: IDatabase) {
+    const dbInstance = tx || this.db
     return await dbInstance.raw
       .delete(barberShopPhoneTable)
       .where(eq(barberShopPhoneTable.barberShopId, barberShopId))

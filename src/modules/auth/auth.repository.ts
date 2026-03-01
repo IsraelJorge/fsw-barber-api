@@ -1,13 +1,18 @@
 import { eq } from 'drizzle-orm'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { db } from '@/db'
+import { IDatabase } from '@/db'
 import { userTable } from '@/db/schemas/user'
 
 @injectable()
 export class AuthRepository {
+  constructor(
+    @inject('Database')
+    private readonly db: IDatabase,
+  ) {}
+
   async findByEmail(email: string) {
-    const [user] = await db.raw
+    const [user] = await this.db.raw
       .select()
       .from(userTable)
       .where(eq(userTable.email, email))

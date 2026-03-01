@@ -15,4 +15,4 @@ const drizzleDb = drizzle(sql, {
 
 export const db = new Database(drizzleDb)
 
-export type DbTransaction = typeof db
+export type IDatabase = typeof db

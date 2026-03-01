@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { db, DbTransaction } from '@/db'
+import { IDatabase } from '@/db'
 import { QueryBuilder } from '@/db/helpers/query-builder'
 import {
   selectColumnsQueryBuilder,
@@ -37,6 +37,11 @@ const columns = selectColumnsQueryBuilder(barberShopTable)(selectedColumns)
 
 @injectable()
 export class BarberShopRepository {
+  constructor(
+    @inject('Database')
+    private readonly db: IDatabase,
+  ) {}
+
   async findAll({ filters }: PaginationParams<BarberShopFilters>) {
     const where = new QueryBuilder(barberShopTable)
       .ilike('name', `${filters.name}%`)
@@ -46,28 +51,20 @@ export class BarberShopRepository {
       .eq('barberUserId', filters.barberUserId)
       .build()
 
-    return db.paginate({
+    return this.db.paginate({
       table: 'barberShopTable',
       drizzleTable: barberShopTable,
       config: {
         columns: selectedColumns,
         orderBy: [desc(barberShopTable.createdAt)],
         where,
-        with: {
-          barberShopHours: true,
-          barberShopPhones: {
-            columns: {
-              phone: true,
-            },
-          },
-        },
       },
       pagination: { page: filters.page, limit: filters.limit },
     })
   }
 
   async findById(id: string) {
-    const barberShop = await db.findFirst({
+    const barberShop = await this.db.findFirst({
       table: 'barberShopTable',
       config: {
         columns: selectedColumns,
@@ -88,9 +85,9 @@ export class BarberShopRepository {
 
   async create(
     data: Omit<CreateBarberShopInput, 'phones' | 'hours'>,
-    tx?: DbTransaction,
+    tx?: IDatabase,
   ) {
-    const dbInstance = tx || db
+    const dbInstance = tx || this.db
     const [barberShop] = await dbInstance.raw
       .insert(barberShopTable)
       .values(data)
@@ -102,26 +99,20 @@ export class BarberShopRepository {
   async update(
     id: string,
     data: Omit<UpdateBarberShopInput, 'phones' | 'hours'>,
-    tx?: DbTransaction,
+    tx?: IDatabase,
   ) {
-    const dbInstance = tx || db
-    const [barberShop] =
-      Object.keys(data).length > 0
-        ? await dbInstance.raw
-            .update(barberShopTable)
-            .set({ ...data, updatedAt: new Date() })
-            .where(eq(barberShopTable.id, id))
-            .returning(columns)
-        : await dbInstance.raw
-            .select(columns)
-            .from(barberShopTable)
-            .where(eq(barberShopTable.id, id))
+    const dbInstance = tx || this.db
+    const [barberShop] = await dbInstance.raw
+      .update(barberShopTable)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(barberShopTable.id, id))
+      .returning(columns)
 
     return barberShop
   }
 
-  async delete(id: string, tx?: DbTransaction) {
-    const dbInstance = tx || db
+  async delete(id: string, tx?: IDatabase) {
+    const dbInstance = tx || this.db
     return await dbInstance.raw
       .update(barberShopTable)
       .set({ deletedAt: new Date() })

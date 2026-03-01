@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { db } from '@/db'
+import { IDatabase } from '@/db'
 import { QueryBuilder } from '@/db/helpers/query-builder'
 import {
   selectColumnsQueryBuilder,
@@ -31,13 +31,18 @@ const columns = selectColumnsQueryBuilder(userTable)(selectedColumns)
 
 @injectable()
 export class UserRepository {
+  constructor(
+    @inject('Database')
+    private readonly db: IDatabase,
+  ) {}
+
   async findAll({ filters }: PaginationParams<UserFilters>) {
     const where = new QueryBuilder(userTable)
       .ilike('name', `${filters.name}%`)
       .ilike('email', `${filters.email}%`)
       .build()
 
-    return db.paginate({
+    return this.db.paginate({
       table: 'userTable',
       drizzleTable: userTable,
       config: {
@@ -50,7 +55,7 @@ export class UserRepository {
   }
 
   async findById(id: string) {
-    const [user] = await db.raw
+    const [user] = await this.db.raw
       .select(columns)
       .from(userTable)
       .where(eq(userTable.id, id))
@@ -58,7 +63,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    const [user] = await db.raw
+    const [user] = await this.db.raw
       .select(columns)
       .from(userTable)
       .where(eq(userTable.email, email))
@@ -66,7 +71,7 @@ export class UserRepository {
   }
 
   async create(data: CreateUserInput) {
-    const [user] = await db.raw
+    const [user] = await this.db.raw
       .insert(userTable)
       .values(data)
       .returning(columns)
@@ -74,7 +79,7 @@ export class UserRepository {
   }
 
   async update(id: string, data: UpdateUserInput) {
-    const [user] = await db.raw
+    const [user] = await this.db.raw
       .update(userTable)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(userTable.id, id))
@@ -83,7 +88,7 @@ export class UserRepository {
   }
 
   async delete(id: string) {
-    return await db.raw
+    return await this.db.raw
       .update(userTable)
       .set({ deletedAt: new Date() })
       .where(eq(userTable.id, id))

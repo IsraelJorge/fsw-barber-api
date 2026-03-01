@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { db, DbTransaction } from '@/db'
+import { IDatabase } from '@/db'
 import {
   selectColumnsQueryBuilder,
   SelectedColumns,
@@ -23,8 +23,13 @@ const columns = selectColumnsQueryBuilder(barberShopHourTable)(selectedColumns)
 
 @injectable()
 export class BarberShopHourRepository {
+  constructor(
+    @inject('Database')
+    private readonly db: IDatabase,
+  ) {}
+
   async findByBarberShopId(barberShopId: string) {
-    return await db.raw
+    return await this.db.raw
       .select(columns)
       .from(barberShopHourTable)
       .where(eq(barberShopHourTable.barberShopId, barberShopId))
@@ -33,11 +38,11 @@ export class BarberShopHourRepository {
   async createMany(
     barberShopId: string,
     hours: CreateBarberShopHourInput[],
-    tx?: DbTransaction,
+    tx?: IDatabase,
   ) {
     if (!hours || hours.length === 0) return []
 
-    const dbInstance = tx || db
+    const dbInstance = tx || this.db
     return await dbInstance.raw
       .insert(barberShopHourTable)
       .values(
@@ -52,9 +57,9 @@ export class BarberShopHourRepository {
   async updateSingleByDay(
     barberShopId: string,
     data: CreateBarberShopHourInput,
-    tx?: DbTransaction,
+    tx?: IDatabase,
   ) {
-    const dbInstance = tx || db
+    const dbInstance = tx || this.db
     const [hour] = await dbInstance.raw
       .update(barberShopHourTable)
       .set(data)
