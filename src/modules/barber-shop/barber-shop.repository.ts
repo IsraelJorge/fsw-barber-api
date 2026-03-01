@@ -2,13 +2,13 @@ import { desc, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
-import { barberShopTable } from '@/db/schemas/barber-shop'
-import { PaginationParams } from '@/shared/pagination'
-import { QueryBuilder } from '@/shared/utils/query-builder'
+import { QueryBuilder } from '@/db/helpers/query-builder'
 import {
   selectColumnsQueryBuilder,
   SelectedColumns,
-} from '@/shared/utils/select-columns'
+} from '@/db/helpers/select-columns'
+import { barberShopTable } from '@/db/schemas/barber-shop'
+import { PaginationParams } from '@/shared/pagination'
 
 import type {
   BarberShopFilters,
@@ -74,7 +74,11 @@ export class BarberShopRepository {
         where: eq(barberShopTable.id, id),
         with: {
           barberShopHours: true,
-          barberShopPhones: true,
+          barberShopPhones: {
+            columns: {
+              phone: true,
+            },
+          },
         },
       },
     })

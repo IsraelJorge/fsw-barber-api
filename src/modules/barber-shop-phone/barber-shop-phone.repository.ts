@@ -2,8 +2,8 @@ import { desc, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
+import { selectColumnsQueryBuilder } from '@/db/helpers/select-columns'
 import { barberShopPhoneTable } from '@/db/schemas/barber-shop-phone'
-import { selectColumnsQueryBuilder } from '@/shared/utils/select-columns'
 
 const columns = selectColumnsQueryBuilder(barberShopPhoneTable)({
   id: true,

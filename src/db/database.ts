@@ -7,6 +7,7 @@ import { paginate, Pagination, PaginationFilter } from '@/shared/pagination'
 import {
   DbQueryConfigFirst,
   DbQueryConfigMany,
+  DbQueryResult,
   DbTableName,
   IDatabase,
 } from './database.interface'
@@ -27,16 +28,27 @@ export class Database<
   async findFirst<
     TTableName extends DbTableName<TSchema>,
     TQueryConfig extends DbQueryConfigFirst<TSchema, TTableName>,
-  >({ table, config }: { table: TTableName; config?: TQueryConfig }) {
-    const data = await this.getQuery(table).findFirst(config)
-    return data as any
+  >({
+    table,
+    config,
+  }: {
+    table: TTableName
+    config?: TQueryConfig
+  }): Promise<DbQueryResult<TSchema, TTableName, TQueryConfig> | undefined> {
+    return this.getQuery(table).findFirst(config)
   }
 
   async findMany<
     TTableName extends DbTableName<TSchema>,
     TQueryConfig extends DbQueryConfigMany<TSchema, TTableName>,
-  >({ table, config }: { table: TTableName; config?: TQueryConfig }) {
-    return this.getQuery(table).findMany(config) as any
+  >({
+    table,
+    config,
+  }: {
+    table: TTableName
+    config?: TQueryConfig
+  }): Promise<DbQueryResult<TSchema, TTableName, TQueryConfig>[]> {
+    return this.getQuery(table).findMany(config)
   }
 
   async paginate<
@@ -52,7 +64,7 @@ export class Database<
     drizzleTable: Table
     config?: TQueryConfig
     pagination: PaginationFilter
-  }): Promise<Pagination<any>> {
+  }): Promise<Pagination<DbQueryResult<TSchema, TTableName, TQueryConfig>>> {
     const { page, limit } = pagination
     const offset = (page - 1) * limit
 

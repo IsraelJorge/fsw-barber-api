@@ -2,13 +2,13 @@ import { desc, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db } from '@/db'
-import { userTable } from '@/db/schemas/user'
-import { PaginationParams } from '@/shared/pagination'
-import { QueryBuilder } from '@/shared/utils/query-builder'
+import { QueryBuilder } from '@/db/helpers/query-builder'
 import {
   selectColumnsQueryBuilder,
   SelectedColumns,
-} from '@/shared/utils/select-columns'
+} from '@/db/helpers/select-columns'
+import { userTable } from '@/db/schemas/user'
+import { PaginationParams } from '@/shared/pagination'
 
 import type {
   CreateUserInput,

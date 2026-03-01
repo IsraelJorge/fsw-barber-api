@@ -2,11 +2,11 @@ import { and, eq } from 'drizzle-orm'
 import { injectable } from 'tsyringe'
 
 import { db, DbTransaction } from '@/db'
-import { barberShopHourTable } from '@/db/schemas/barber-shop-hour'
 import {
   selectColumnsQueryBuilder,
   SelectedColumns,
-} from '@/shared/utils/select-columns'
+} from '@/db/helpers/select-columns'
+import { barberShopHourTable } from '@/db/schemas/barber-shop-hour'
 
 import { CreateBarberShopHourInput } from './barber-shop-hour.schema'
 
@@ -65,6 +65,7 @@ export class BarberShopHourRepository {
         ),
       )
       .returning(columns)
+
     return hour
   }
 }
