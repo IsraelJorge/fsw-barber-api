@@ -3,6 +3,8 @@ import { container } from 'tsyringe'
 import { db } from '@/db'
 import { AuthService } from '@/modules/auth/auth.service'
 import { BarberShopService } from '@/modules/barber-shop/barber-shop.service'
+import { ServiceController } from '@/modules/service/service.controller'
+import { ServiceService } from '@/modules/service/service.service'
 import { UserService } from '@/modules/user/user.service'
 
 container.registerInstance('Database', db)
@@ -11,4 +13,9 @@ container.registerSingleton<UserService>('UserService', UserService)
 container.registerSingleton<BarberShopService>(
   'BarberShopService',
   BarberShopService,
+)
+container.registerSingleton<ServiceService>('ServiceService', ServiceService)
+container.registerSingleton<ServiceController>(
+  'ServiceController',
+  ServiceController,
 )

@@ -4,6 +4,7 @@ import { pgTable, text, uuid, varchar } from 'drizzle-orm/pg-core'
 import { timestamps } from '../helpers/columns.helpers'
 import { barberShopHourTable } from './barber-shop-hour'
 import { barberShopPhoneTable } from './barber-shop-phone'
+import { serviceTable } from './service'
 import { userTable } from './user'
 
 export const barberShopTable = pgTable('barber_shop', {
@@ -32,5 +33,6 @@ export const barberShopTableRelations = relations(
     }),
     barberShopHours: many(barberShopHourTable),
     barberShopPhones: many(barberShopPhoneTable),
+    barberShopServices: many(serviceTable),
   }),
 )

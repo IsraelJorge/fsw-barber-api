@@ -15,6 +15,13 @@
       "when": 1772129877106,
       "tag": "0001_add_tables_barber_shop",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772388192749,
+      "tag": "0002_add_table_service",
+      "breakpoints": true
     }
   ]
 }

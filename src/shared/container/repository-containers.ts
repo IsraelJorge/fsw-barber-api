@@ -4,6 +4,7 @@ import { AuthRepository } from '@/modules/auth/auth.repository'
 import { BarberShopRepository } from '@/modules/barber-shop/barber-shop.repository'
 import { BarberShopHourRepository } from '@/modules/barber-shop-hour/barber-shop-hour.repository'
 import { BarberShopPhoneRepository } from '@/modules/barber-shop-phone/barber-shop-phone.repository'
+import { ServiceRepository } from '@/modules/service/service.repository'
 import { UserRepository } from '@/modules/user/user.repository'
 
 container.registerSingleton<AuthRepository>('AuthRepository', AuthRepository)
@@ -19,4 +20,8 @@ container.registerSingleton<BarberShopHourRepository>(
 container.registerSingleton<BarberShopPhoneRepository>(
   'BarberShopPhoneRepository',
   BarberShopPhoneRepository,
+)
+container.registerSingleton<ServiceRepository>(
+  'ServiceRepository',
+  ServiceRepository,
 )

@@ -8,5 +8,6 @@ export const MessageError = {
   UNAUTHORIZED: 'Unauthorized',
   FORBIDDEN: 'Forbidden',
   NOT_FOUND: 'Not found',
+  SERVICE_NOT_FOUND: 'Service not found',
   INTERNAL_SERVER_ERROR: 'Internal server error',
 } as const
